@@ -86,7 +86,7 @@ export const getAllTokens = async (): Promise<TokenType[]> => {
       const tokens: TokenType[] = await getTokens(chainId);
       allTokens.push(...tokens);
     } catch (err) {
-      console.log(`Error fetching tokens for chainId ${chainId}:`, err);
+      console.warn(`Error fetching tokens for chainId ${chainId}:`, err);
     }
 	}
 
@@ -123,11 +123,16 @@ export const getTokens = async (chainId: number): Promise<TokenType[]> => {
 }
 
 
+/**
+ * Checks if the given token is a native token.
+ *
+ * @param {string} token - The token to check.
+ * @return {Promise<boolean>} A promise that resolves to true if the token is a native token, false otherwise.
+ */
 export const isNativeToken = async (token: string): Promise<boolean> => {
 	const tokens: TokenType[] = await getAllTokens()
 	return tokens.some(t => t.tokenName === token && t.tokenType === "Native")
 }
-
 
 
 /**
@@ -149,7 +154,6 @@ export const getUserBalances = async (address: `0x${string}` | undefined,): Prom
 			userBalances[balance.symbol] = {
 				address: address as `0x${string}`,
 				chainId: chainId,
-				// token: '0x',
 				balance: Number(balance.value)
 			}
 		}
@@ -196,8 +200,9 @@ export const getUserBalance = async (
 		.then((balance) => {
 			return balance
 		})
-	.catch(err => { console.log("error : ", err.message, address, chainId, tokenAdress) })
+	.catch(err => { console.warn("error : ", err.message, address, chainId, tokenAdress) })
 }
+
 
 /**
  * Saves the operation status to local storage.
@@ -207,6 +212,7 @@ export const getUserBalance = async (
  */
 export const saveOperationStatusData = (operationStatus: OperationDetailType): void => 
   localStorage.setItem('operationStatus', JSON.stringify(operationStatus));
+
 
 /**
  * Retrieves the operation status from local storage.
@@ -227,6 +233,7 @@ export const getOperationStatusData = (): OperationDetailType | null => {
 export const deleteOperationStatusData = (): void => {
 	localStorage.removeItem('operationStatus');
 }
+
 
 /**
  * Retrieves the status label from the OperationStatus enum based on the given status number.
@@ -271,7 +278,7 @@ export const getAuthorizedTokenNamesListByChainId = async (
 			return data
 		})
 		.catch((err) => {
-			console.log("Error: operationStatus : ", err)
+			console.warn("Error: operationStatus : ", err)
 			return null;
 		});
 }
@@ -310,7 +317,7 @@ export const getOperationHashStatus = async (
 				return operationStatus
 			})
 			.catch((err) => {
-				console.log("Error: operationStatus : ", err)
+				console.warn("Error: operationStatus : ", err)
 				return null;
 			});
 }
@@ -341,7 +348,7 @@ export const getAvailableNonceForUser = async (
 				return BigInt(nonce)
 			})
 			.catch((err) => {
-				console.log("Error: nonce : ", err)
+				console.warn("Error: nonce : ", err)
 				return null;
 			});
 }
@@ -386,7 +393,7 @@ export const getOperationHash = async (
 				return operationHash
 			})
 			.catch((err) => {
-				console.log("Error: operationHash : ", err)
+				console.warn("Error: operationHash : ", err)
 				return null;
 			});
 }
@@ -487,7 +494,7 @@ export const createBridgeOperation = async (
 		simulate?: boolean,
 		execute?: boolean,
 	}
-) => {
+): Promise<any> => {
 	const parameters: any = {
 		chainId: originChainId,
 		abi: BRIDGE_ABI,
@@ -510,8 +517,7 @@ export const createBridgeOperation = async (
 		parameters.value = 0
 	}
 
-	const tx = writeContractByFunctionNamev2(parameters, simulate, execute)
-	return tx
+	return writeContractByFunctionNamev2(parameters, simulate, execute)
 	.then((tx) => {
 		return tx
 	})
@@ -563,9 +569,7 @@ export const depositFees = async (
 		value: amount
 	}
 
-	const tx = writeContractByFunctionNamev2(parameters, simulate, execute)
-	
-	return tx
+	return writeContractByFunctionNamev2(parameters, simulate, execute)
 	.then((tx) => {
 		return tx
 	})

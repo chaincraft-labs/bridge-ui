@@ -12,6 +12,16 @@ import { getAllTokens } from "@/context/allfeat_bridge";
 import { TokenType } from "@/context/types";
 
 
+/**
+ * A reusable select component for selecting tokens.
+ *
+ * @param {function} onChange - Callback function to handle token selection change.
+ * @param {string} className - Class name for the select trigger.
+ * @param {string} classNameContent - Class name for the select content.
+ * @param {string} value - Currently selected token value.
+ * @param {string} placeholder - Placeholder text for the select input.
+ * @return {JSX.Element} A select component with token options.
+ */
 export function SelectTokens({
   onChange = () => {},
   className,
