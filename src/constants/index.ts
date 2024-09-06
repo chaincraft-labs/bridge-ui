@@ -10,8 +10,6 @@ export const TOKEN_PAIRS: TokenPairsType = {
   "ETH": "AFT",   // give abETH; origin ETH, target AFT
   "abETH": "ETH", // give ETH  ; origin AFT, target Ethereum
   "hbAFT": "AFT", // give AFT  ; origin Ethereum, target AFT
-  // "DAI": "AFT",   // give abDAI; origin DAI, target AFT
-  // "abDAI": "DAI", // give DAI  ; origin AFT, target Ethereum
 }
 
 
@@ -20,33 +18,26 @@ export const AUTHORIZED_TOKENS: AuthorizedTokensType = {
   abETH: 'ethereum',
   AFT: 'allfeat',
   hbAFT: 'allfeat',
-  DAI: 'dai',
-  abDAI: 'dai',
 }
 
 
 export const tokenBridgedLabel: TokenBridgedLabelType = {
   abETH: 'from Allfeat to Ethereum',
-  abDAI: 'from Allfeat to Ethereum',
   hbAFT: 'from Ethereum to Allfeat',
   AFT: 'from Allfeat to Ethereum',
   ETH: 'from Ethereum to Allfeat',
-  DAI: 'from Ethereum to Allfeat',
 }
 
 export const DEPLOYED_CONTRACTS: ContractsType = {
   440: {
     contracts: {
-      Storage: '0x3eC42ad58f5AE4c75a5fC32046814641e6992409',
-      TokenFactory: '0x829B4B55880f5A5A29204394662828f10Ff20391',
-      Vault: '0x4cC8d39d8224c41858771B951a46FaC4C196C836',
-      RelayerBase: '0xa92D0afeB8077893b16769B1BBf011509731bA49',
-      BridgeBase: '0x5291375000698b20aF3bEEFEBB5F8C3e8bA58bBA'
+      Storage: process.env.NEXT_PUBLIC_ALLFEAT_STORAGE_ADDRESS || "",
+      RelayerBase: process.env.NEXT_PUBLIC_ALLFEAT_RELAYER_ADDRESS || "",
+      BridgeBase: process.env.NEXT_PUBLIC_ALLFEAT_BRIDGE_ADDRESS || "",
     },
     tokens: {
       BridgedToken: {
-        abETH: '0x763D958Bd2a480A986f9393aE0E7Ce126b037bc6',
-        // abDAI: '0xd0F88C0c18377a8B5360b5A83A3aE16bC04C163d'
+        abETH: process.env.NEXT_PUBLIC_ALLFEAT_ABETH_ADDRESS || "",
       },
       Native: {
         AFT: '0x'
@@ -55,17 +46,13 @@ export const DEPLOYED_CONTRACTS: ContractsType = {
   },
   1337: {
     contracts: {
-      Storage: '0x8464135c8F25Da09e49BC8782676a84730C318bC',
-      TokenFactory: '0x71C95911E9a5D330f4D621842EC243EE1343292e',
-      Vault: '0x948B3c65b89DF0B4894ABE91E6D02FE579834F8F',
-      RelayerBase: '0x712516e61C8B383dF4A63CFe83d7701Bce54B03e',
-      BridgeBase: '0xbCF26943C0197d2eE0E5D05c716Be60cc2761508',
-      MockedDai: '0x85C5Dd61585773423e378146D4bEC6f8D149E248'
+      Storage: process.env.NEXT_PUBLIC_ETHEREUM_STORAGE_ADDRESS || "",
+      RelayerBase: process.env.NEXT_PUBLIC_ETHEREUM_RELAYER_ADDRESS || "",
+      BridgeBase: process.env.NEXT_PUBLIC_ETHEREUM_BRIDGE_ADDRESS || "",
     },
     tokens: {
       BridgedToken: { 
-        hbAFT: '0x127Ac224013F1918823AFfeb7053b867C496527f',
-        // DAI: '0x6B175474E89094C44Da98b954EedeAC495271d0F' ,
+        hbAFT: process.env.NEXT_PUBLIC_ETHEREUM_HBAFT_ADDRESS || "",
       },
       Native: {
         ETH: '0x',
@@ -74,18 +61,6 @@ export const DEPLOYED_CONTRACTS: ContractsType = {
   }
 }
 
-export enum OperationStatus_ {
-  NONE, //.................Step 0
-  ORG_OP_CREATED, //.......Step 1 user deposited asking for bridge
-  DST_FEES_DEPOSITED, //...Step 2 user deposited fees on dst chain
-  DST_FEES_CONFIRMED, //...Step 3 fees deposit tx confirmed (finalized)
-  ORG_FEES_LOCKED, //......Step 4 org received the fees event from dst
-  ORG_OP_READY, //.........Step 5 fees locked & confirmed and deposit confirmed (finalized) (=processing)
-  DST_OP_RECEIVED, //......Step 6 dst received operation order with params
-  DST_OP_FINALIZED, // mkdir, //.....Step 7 dst tx is finalized
-  ORG_OP_CLOSED, //........Step 8 org tx is closed after dst tx is finalized
-  ORG_OP_CANCELED //.......Step x org tx is canceled
-}
 
 export enum OperationStatusLabels {
   'NONE',

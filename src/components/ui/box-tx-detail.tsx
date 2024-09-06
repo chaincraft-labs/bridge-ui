@@ -16,6 +16,14 @@ type txDetail = {
   label: string
 }
 
+/**
+ * A component that displays a list of transaction details with expandable transaction hashes.
+ * It also provides buttons to copy the transaction hash and open it in a blockchain explorer.
+ *
+ * @param {txDetail[]} txDatas - An array of transaction detail objects.
+ * @param {string} [className] - An optional CSS class name to apply to the component.
+ * @return {JSX.Element} The rendered component.
+ */
 const BoxTxDetail = (
   {
     txDatas,
@@ -25,29 +33,47 @@ const BoxTxDetail = (
     txDatas: txDetail[],
     className?: string
   }
-) => {
+): JSX.Element => {
   const [expends, setExpands] = useState<ExpendsType>({});
   
+  /**
+   *  Toggles the expansion state of a transaction detail item.
+   *
+   *  @param {number} index - The index of the transaction detail item to toggle.
+   *  @return {void}
+   */
   const handleClick = (index: number): void => {
     setExpands(prev => ({...prev, [index]: !expends[index]}))
   };
 
-  const handleCopy = async (index: number) => {
+
+  /**
+   *  Copies the transaction hash item to the clipboard.
+   *
+   *  @param {number} index - The index of the transaction detail item to copy.
+   *  @return {void}
+   */
+  const handleCopy = async (index: number): Promise<void> => {
     const value = txDatas[index].txHash;
 
     try {
       await navigator.clipboard.writeText(value);
     } catch (err) {
-      console.error("Failed to copy: ", err);
+      console.warn("Failed to copy: ", err);
     }
   };
 
-  const handleExplorer = async (index: number) => {
+
+  /**
+   *  Opens the transaction detail item in a blockchain explorer.
+   *
+   *  @param {number} index - The index of the transaction detail item to open.
+   *  @return {void}
+   */
+  const handleExplorer = async (index: number): Promise<void> => {
     const value = txDatas[index].txHash;
     const explorerUrl = getExplorerUrl(txDatas[index].chainId)
     const url = `${explorerUrl}${value}`
-
-    console.log(txDatas)
 
     window.open(url, '_blank');
   };
@@ -85,7 +111,6 @@ const BoxTxDetail = (
             >
               Copy
             </Button>
-
           </div>
         </div>
       ))}

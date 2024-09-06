@@ -1,6 +1,5 @@
 "use client";
 
-
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { clx } from "@/lib/utils/clx/clx-merge";
 import { useAccount } from 'wagmi';
@@ -33,11 +32,14 @@ type TokenBalances = {
   balanceTarget: number
 }
 
+
+
 /**
+ * A SwapTokenCard component that enables users to transfer assets between Allfeat and blockchains.
  * 
- * @returns 
+ * @return {JSX.Element} The SwapTokenCard component.
  */
-export default function SwapTokenCard() {
+export default function SwapTokenCard(): JSX.Element {
   const ButtonTransfer = clx(HighlightButton, `py-6 text-xl from-teal-200 via-teal-100 to-teal-200 dark:from-teal-200 dark:via-teal-100 dark:to-teal-200 text-zinc-900 dark:text-zinc-900`)
 
   const { open } = useWeb3Modal();
@@ -46,7 +48,6 @@ export default function SwapTokenCard() {
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [error, setError] = useState<string | null>(null)
-
   const [formData, setFormData] = useState<FormData>({
     chainIdOrigin: 0,
     chainIdTarget: 0,
@@ -110,13 +111,19 @@ export default function SwapTokenCard() {
       setOperationDetail(operationStatus);
     } catch (error: any) {
       setError("An error occurred while submitting the form." + error.message);
-      console.log("error : ", error.message, error.cause)
+      console.warn("error : ", error.message, error.cause)
     } finally {
       reset()
     }
   };
 
-  const reset = () => {
+
+  /**
+   * Resets the form data and token balances to their initial states.
+   *
+   * @return {void} No return value.
+   */
+  const reset = (): void => {
 
     // Reset form
     setFormData({
@@ -182,7 +189,6 @@ export default function SwapTokenCard() {
   const handleChangeOnSelect = (token: any): void => {
     getUserBalances(address)
       .then((balances) => {
-        // local process
         const tokenPair: TokenPairType = getTokenPairsReverse(token)        
         const tokenFormattedBalance = getAmountToShortDecimal(balances[token].balance)
         const tokenPairFormattedBalance = getAmountToShortDecimal(balances[tokenPair.target].balance)
@@ -206,7 +212,7 @@ export default function SwapTokenCard() {
         });
 
       })
-      .catch(err => { console.log("error : ", err) })
+      .catch(err => { console.warn("error : ", err) })
   };
 
 
@@ -237,6 +243,7 @@ export default function SwapTokenCard() {
   useEffect(() => {
     handleEnableSubmitButton()
   }, [formData.amountOrigin, formData.tokenOrigin])
+
 
   return (
     <div>

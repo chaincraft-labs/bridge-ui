@@ -1,6 +1,11 @@
 import React from 'react'
 
-const Footer = () => {
+/**
+ * A functional component that renders the application's footer.
+ *
+ * @return {JSX.Element} The JSX element representing the footer.
+ */
+const Footer = (): JSX.Element => {
   const currentYear = new Date().getFullYear();
 
   return (

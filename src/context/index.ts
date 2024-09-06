@@ -22,7 +22,6 @@ export const writeContractByFunctionName = async (
   value: bigint,
   ...args: `0x${string}`[] | any[]
 ): Promise<`0x${string}`> => {
-  
   try {
     await simulateContract(config, {
       chainId: chainId,

@@ -36,17 +36,38 @@ const SwapTokenStatus = () => {
   const [showError, setShowError] = useState(false)
   const [operationStatusData, setOperationStatusData] = useState<OperationDetailType | null>()
 
+
+  /**
+   * Handles the duration of the function by incrementing it by the duration per interval
+   * if the current duration is 0.
+   *
+   * @return {void} This function does not return anything.
+   */
   const handleDuration = (): void => {
     if (duration === 0) 
       setDuration(prev => prev + DURATION_PER_INTERVAL) // 10 seconds
   }
 
+
+  /**
+   * Checks whether the given status is invalid or not.
+   *
+   * @param {number | null} status - the status to be checked
+   * @return {boolean} true if the status is invalid, false otherwise
+   */
   const isStatusInvalid = (status: number | null): boolean => {
     if (!status || [0, 9].includes(status)) 
       return true
     return false
   }
   
+
+  /**
+   * Checks whether the given status is completed or not.
+   *
+   * @param {number | null} status - the status to be checked
+   * @return {boolean} true if the status is completed, false otherwise
+   */
   const isStatusCompleted = (status: number | null): boolean => {
     if (status && [8].includes(status))
       return true
@@ -54,6 +75,12 @@ const SwapTokenStatus = () => {
   }
 
 
+  /**
+   * Returns the status name for a given status.
+   *
+   * @param {number | null} status - the status to retrieve the name for
+   * @return {string | null} the status name, or an empty string if the status is null
+   */
   const handleGetStatusName = (status: number | null): string | null => {
     if ( status)
       return getStatusLabel(status)
@@ -61,6 +88,11 @@ const SwapTokenStatus = () => {
   }
   
 
+  /**
+   * Retrieves and processes operation detail data.
+   *
+   * @return {OperationStatusDataType} An object containing operation detail data.
+   */
   const getOperationDetail = (): OperationStatusDataType => {
     const operationStatusData: OperationDetailType | null = getOperationStatusData()
 
@@ -94,42 +126,14 @@ const SwapTokenStatus = () => {
     setTaskCompleted(false);
   }
 
-  const getOperationHashStatusMock = async (
-    address: `0x${string}`, 
-    chainIdOrigin: number, 
-    operationHash: string
-  ): Promise<number> => {
-    
-    if (retryCount === 1 && status === 0) {
-      return 1
-    } else if (retryCount === 1 && status === 1) {
-      return 2
-    } else if (retryCount === 1 && status === 2) {
-      return 3
-    } else if (retryCount === 1 && status === 3) {
-      return 4
-    } else if (retryCount === 1 && status === 4) {
-      return 5
-    } else if (retryCount === 1 && status === 5) {
-      return 6
-    } else if (retryCount === 1 && status === 6) {
-      return 7
-    } else if (retryCount === 1 && status === 7) {
-      return 8
-    } 
-    return status ?? 0
-  }
- 
-  
+
   const manageOperationStatus = useCallback(async (immediate = false) => {
     try {
       handleDuration()
       const operationDetail: OperationStatusDataType = getOperationDetail()
 
-      // check we have 2 tx hash 
       if (operationDetail.txCreateBridgeOperation === '0x' || operationDetail.txDeposiFees === '0x') {
         setShowError(true)
-        // setShowProgessBar(true) // for testing only
         resetState()
         return
       }
@@ -139,13 +143,6 @@ const SwapTokenStatus = () => {
         resetState()
         return
       }
-
-      // Get status from blockchain
-      // const newStatus = await getOperationHashStatusMock(
-      //   address as `0x${string}`,
-      //   operationDetail.chainIdOrigin,
-      //   operationDetail.operationHash
-      // )
 
       const newStatus = await getOperationHashStatus(
         address as `0x${string}`,
@@ -167,7 +164,6 @@ const SwapTokenStatus = () => {
       }
       
       if(statusInvalid) {
-        // Reset and leave only after reached the max number of retries
         if (retryCount >= RETRY_MAX) {
           resetState()
           return
@@ -183,18 +179,22 @@ const SwapTokenStatus = () => {
       }
 
     } catch (error) {
-      console.log("error", error)
+      console.warn("error", error)
       resetState()
     }
 
   }, [status, retryCount, duration])
+
+
 
   useEffect(() => {        
     if (typeof window !== "undefined" && isConnected && !taskCompleted) {
       const intervalId = setInterval(() => manageOperationStatus(), duration)
       return () => clearInterval(intervalId);
     };
-  }, [operationDetail, getOperationHashStatusMock, taskCompleted]);
+  }, [operationDetail, manageOperationStatus, taskCompleted]);
+
+
 
   useEffect(() => {
     initState()
