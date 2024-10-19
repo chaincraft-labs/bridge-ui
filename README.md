@@ -1,6 +1,6 @@
-# Allfeat Multi-Chain Token Swap DApp
+# Harmonie Multi-Chain Token Swap DApp
 
-A decentralized web application built with Next.js 14 and AppKit Connect Wallet, enabling seamless token swaps from the Allfeat blockchain to multiple other blockchains. Efficient, secure, and designed for cross-chain interoperability.
+A decentralized web application built with Next.js 14 and AppKit Connect Wallet, enabling seamless token swaps from the Harmonie blockchain to multiple other blockchains. Efficient, secure, and designed for cross-chain interoperability.
 
 > MVP version
 
