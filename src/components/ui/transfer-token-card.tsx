@@ -35,11 +35,12 @@ type TokenBalances = {
 
 
 /**
- * A SwapTokenCard component that enables users to transfer assets between Harmonie and blockchains.
+ * A TransferTokenCard component that enables users to transfer assets 
+ * between Harmonie and other blockchains.
  * 
- * @return {JSX.Element} The SwapTokenCard component.
+ * @return {JSX.Element} The TransferTokenCard component.
  */
-export default function SwapTokenCard(): JSX.Element {
+export default function TransferTokenCard(): JSX.Element {
   const ButtonTransfer = clx(HighlightButton, `py-6 text-xl from-teal-200 via-teal-100 to-teal-200 dark:from-teal-200 dark:via-teal-100 dark:to-teal-200 text-zinc-900 dark:text-zinc-900`)
 
   const { open } = useWeb3Modal();

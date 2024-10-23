@@ -33,7 +33,7 @@ import {
 
 const PATH = 'context/bridge'
 
-const HelperSwapGetTokens = () => {
+const HelperGetTokens = () => {
   const { address } = useAccount();
 
   // get chain ids
@@ -363,7 +363,7 @@ const HelperSwapGetTokens = () => {
 
   return (
     <div className='mt-6 mb-12' >
-      <h1 className='p-1 text-xl'>HelperSwapGetTokens</h1>
+      <h1 className='p-1 text-xl'>HelperGetTokens</h1>
 
       {/* getChainIds */}
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
@@ -675,5 +675,5 @@ const HelperSwapGetTokens = () => {
   )
 }
 
-export default HelperSwapGetTokens
+export default HelperGetTokens
 

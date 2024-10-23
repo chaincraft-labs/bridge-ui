@@ -22,7 +22,7 @@ const RETRY_MAX = 50
 const DURATION_PER_INTERVAL = 6000
 
 
-const SwapTokenStatus = () => {
+const TransferTokenStatus = () => {
 
   const { address, isConnected } = useAccount();
   const { operationDetail } = useOperationDetail();
@@ -254,7 +254,7 @@ const SwapTokenStatus = () => {
       {showError && (
         <div className='flex flex-col mt-1 pt-0 rounded bg-zinc-100 dark:bg-zinc-800'>
           <div className='w-full p-1 pt-3 text-red-500'>
-            Error swapping token
+            Error transfering token
           </div>
         </div>
       )}
@@ -262,4 +262,4 @@ const SwapTokenStatus = () => {
   )
 }
 
-export default SwapTokenStatus
+export default TransferTokenStatus
