@@ -4,12 +4,36 @@ import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
 import { GetBalanceReturnType } from 'wagmi/actions'
 import { createSignMessage } from '@/context'
-import { createBridgeOperation, createBridgeTransfer, depositFees, getAllTokens, getAmountFromShortDecimal, getAmountToShortDecimal, getAuthorizedTokenNamesListByChainId, getAvailableNonceForUser, getChainIds, getExplorerUrl, getOperationHash, getOperationHashStatus, getStatusLabel, getTokens, getUserBalance, getUserBalances, isNativeToken, prepareBridgeRequest } from '@/context/allfeat_bridge'
-import { BridgeRequestPreparedType, BridgeTransferDetailType, TokenType, UserBalancesType } from '@/context/types'
+import { 
+  createBridgeOperation, 
+  createBridgeTransfer, 
+  depositFees, 
+  getAllTokens, 
+  getAmountFromShortDecimal, 
+  getAmountToShortDecimal, 
+  getAuthorizedTokenNamesListByChainId, 
+  getAvailableNonceForUser, 
+  getChainIds, 
+  getExplorerUrl, 
+  getOperationHash, 
+  getOperationHashStatus, 
+  getStatusLabel, 
+  getTokens, 
+  getUserBalance, 
+  getUserBalances, 
+  isNativeToken, 
+  prepareBridgeRequest 
+} from '@/context/bridge'
+import { 
+  BridgeRequestPreparedType, 
+  BridgeTransferDetailType, 
+  TokenType, 
+  UserBalancesType 
+} from '@/context/types'
 
-const PATH = 'context/allfeat_bridge'
+const PATH = 'context/bridge'
 
-const HelperSwapGetTokens = () => {
+const HelperGetTokens = () => {
   const { address } = useAccount();
 
   // get chain ids
@@ -339,7 +363,7 @@ const HelperSwapGetTokens = () => {
 
   return (
     <div className='mt-6 mb-12' >
-      <h1 className='p-1 text-xl'>HelperSwapGetTokens</h1>
+      <h1 className='p-1 text-xl'>HelperGetTokens</h1>
 
       {/* getChainIds */}
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
@@ -484,7 +508,7 @@ const HelperSwapGetTokens = () => {
 
         <div className='my-1 text-xs break-all'>addr : {address}</div>
         <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
-        <div className='my-1 text-xs break-all'>Token name ethereum | allfeat: </div>
+        <div className='my-1 text-xs break-all'>Token name ethereum | harmonie: </div>
         <div className='my-1 text-xs break-all'>amount : 1_000_000_000_000_000n </div>
         <div className='my-1 text-xs break-all'>nonce : 1 </div>
 
@@ -521,7 +545,7 @@ const HelperSwapGetTokens = () => {
 
         <div className='my-1 text-xs break-all'>addr : {address}</div>
         <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
-        <div className='my-1 text-xs break-all'>Token name ethereum | allfeat: </div>
+        <div className='my-1 text-xs break-all'>Token name ethereum | harmonie: </div>
         <div className='my-1 text-xs break-all'>amount : 1_000_000_000_000_000n </div>
 
         <input type="text" onChange={e => setPrepareBridgeOperAccountInput(e.target.value as `0x${string}`)} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='account address 0x' />
@@ -543,8 +567,8 @@ const HelperSwapGetTokens = () => {
 
         <div className='my-1 text-xs break-all'>addr : {address}</div>
         <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
-        <div className='my-1 text-xs break-all'>Token symbol : ETH | AFT | abETH | hbAFT</div>
-        <div className='my-1 text-xs break-all'>Token name ethereum | allfeat: </div>
+        <div className='my-1 text-xs break-all'>Token symbol : ETH | HMY | hbETH | gbHMY</div>
+        <div className='my-1 text-xs break-all'>Token name ethereum | harmonie: </div>
         <div className='my-1 text-xs break-all'>amount : 1_000_000_000_000_000n </div>
         <div className='my-1 text-xs break-all'>nonce : 1 </div>
         <div className='my-1 text-xs break-all'>signed message : 0x627e2c7068c214c433b0cb4b038d999466213ecddbac11a1ef925214ce8ec4f87ae4bc540328cf356109257e0c277d72252a3ad644af2fcf3dfe44c822d348f61b</div>
@@ -603,7 +627,7 @@ const HelperSwapGetTokens = () => {
         <div className='my-1 text-xs break-all'>addr : {address}</div>
         <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
         <div className='my-1 text-xs break-all'>amount : 1_000_000_000_000_000n </div>
-        <div className='my-1 text-xs break-all'>Token name ETH | AFT | abETH | hbAFT: </div>
+        <div className='my-1 text-xs break-all'>Token name ETH | HMY | hbETH | gbHMY: </div>
 
         <input type="text" onChange={e => setCreateBridgeTransferAddress(e.target.value as `0x${string}`)} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='account address 0x' />
         <input type="number" onChange={e => setCreateBridgeTransferOriginChainId(Number(e.target.value))} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='origin chain id' />
@@ -617,7 +641,6 @@ const HelperSwapGetTokens = () => {
         <div className='text-xs break-all'>txDeposiFees: {createBridgeTransferTx.txDeposiFees}</div>
         <div className='text-xs break-all'>operationHash: {createBridgeTransferTx.operationHash}</div>
       </div>
-
 
       {/* getAmountToShortDecimal | getAmountFromShortDecimal */}
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
@@ -640,7 +663,7 @@ const HelperSwapGetTokens = () => {
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
         <h2 className='p-1 text-base'>{PATH}/isNativeToken</h2>
 
-        <div className='my-1 text-xs break-all'>tokenName : ETH | AFT | abETH | hbAFT</div>
+        <div className='my-1 text-xs break-all'>tokenName : ETH | HMY | hbETH | gbHMY</div>
 
         <input type="text" onChange={e => setTokenName(e.target.value)} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='tokenName' />
 
@@ -652,5 +675,5 @@ const HelperSwapGetTokens = () => {
   )
 }
 
-export default HelperSwapGetTokens
+export default HelperGetTokens
 

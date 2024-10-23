@@ -4,7 +4,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { clx } from "@/lib/utils/clx/clx-merge";
 import { useAccount } from 'wagmi';
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { getUserBalances, saveOperationStatusData, getTokenPairsReverse, createBridgeTransfer, getAmountToShortDecimal, getAmountFromShortDecimal } from "@/context/allfeat_bridge";
+import { getUserBalances, saveOperationStatusData, getTokenPairsReverse, createBridgeTransfer, getAmountToShortDecimal, getAmountFromShortDecimal } from "@/context/bridge";
 import { BridgeTransferDetailType, OperationDetailType, TokenPairType } from '@/context/types';
 import { useOperationDetail } from '@/context/operation-status';
 import HighlightButton from '@/components/ui/highlight-button';
@@ -35,11 +35,12 @@ type TokenBalances = {
 
 
 /**
- * A SwapTokenCard component that enables users to transfer assets between Allfeat and blockchains.
+ * A TransferTokenCard component that enables users to transfer assets 
+ * between Harmonie and other blockchains.
  * 
- * @return {JSX.Element} The SwapTokenCard component.
+ * @return {JSX.Element} The TransferTokenCard component.
  */
-export default function SwapTokenCard(): JSX.Element {
+export default function TransferTokenCard(): JSX.Element {
   const ButtonTransfer = clx(HighlightButton, `py-6 text-xl from-teal-200 via-teal-100 to-teal-200 dark:from-teal-200 dark:via-teal-100 dark:to-teal-200 text-zinc-900 dark:text-zinc-900`)
 
   const { open } = useWeb3Modal();
@@ -249,7 +250,7 @@ export default function SwapTokenCard(): JSX.Element {
     <div>
       <form className="text-sm md:text-md" onSubmit={handleSubmit}>
         <div className='p-2'>
-          Transfer asset between <span className="font-bold">Allfeat </span> and blockchains. 
+          Transfer asset between <span className="font-bold">Harmonie </span> and others blockchains. 
         </div>
 
         {/* Select token */}

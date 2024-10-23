@@ -1,4 +1,10 @@
-import { AuthorizedTokensType, ContractsType, OperationStatusSelectorType, TokenBridgedLabelType, TokenPairsType } from "@/context/types"
+import { 
+  AuthorizedTokensType, 
+  ContractsType, 
+  OperationStatusSelectorType, 
+  TokenBridgedLabelType, 
+  TokenPairsType 
+} from "@/context/types"
 
 
 /**
@@ -6,41 +12,41 @@ import { AuthorizedTokensType, ContractsType, OperationStatusSelectorType, Token
  * origin chain: target chain -> bridged token
  */
 export const TOKEN_PAIRS: TokenPairsType = {
-  "AFT": "ETH",   // give hbAFT; origin AFT, target ETH
-  "ETH": "AFT",   // give abETH; origin ETH, target AFT
-  "abETH": "ETH", // give ETH  ; origin AFT, target Ethereum
-  "hbAFT": "AFT", // give AFT  ; origin Ethereum, target AFT
+  "HMY": "ETH",   // give gbAFT; origin HMY, target ETH
+  "ETH": "HMY",   // give hbETH; origin ETH, target HMY
+  "hbETH": "ETH", // give ETH  ; origin HMY, target Ethereum
+  "gbHMY": "HMY", // give HMY  ; origin Ethereum, target HMY
 }
 
 
 export const AUTHORIZED_TOKENS: AuthorizedTokensType = {
   ETH: 'ethereum',
-  abETH: 'ethereum',
-  AFT: 'allfeat',
-  hbAFT: 'allfeat',
+  hbETH: 'ethereum',
+  HMY: 'harmonie',
+  gbHMY: 'harmonie',
 }
 
 
 export const tokenBridgedLabel: TokenBridgedLabelType = {
-  abETH: 'from Allfeat to Ethereum',
-  hbAFT: 'from Ethereum to Allfeat',
-  AFT: 'from Allfeat to Ethereum',
-  ETH: 'from Ethereum to Allfeat',
+  hbETH: 'from Harmonie to Ethereum',
+  gbHMY: 'from Ethereum to Harmonie',
+  HMY: 'from Harmonie to Ethereum',
+  ETH: 'from Ethereum to Harmonie',
 }
 
 export const DEPLOYED_CONTRACTS: ContractsType = {
   440: {
     contracts: {
-      Storage: process.env.NEXT_PUBLIC_ALLFEAT_STORAGE_ADDRESS || "",
-      RelayerBase: process.env.NEXT_PUBLIC_ALLFEAT_RELAYER_ADDRESS || "",
-      BridgeBase: process.env.NEXT_PUBLIC_ALLFEAT_BRIDGE_ADDRESS || "",
+      Storage: process.env.NEXT_PUBLIC_HARMONIE_STORAGE_ADDRESS || "",
+      RelayerBase: process.env.NEXT_PUBLIC_HARMONIE_RELAYER_ADDRESS || "",
+      BridgeBase: process.env.NEXT_PUBLIC_HARMONIE_BRIDGE_ADDRESS || "",
     },
     tokens: {
       BridgedToken: {
-        abETH: process.env.NEXT_PUBLIC_ALLFEAT_ABETH_ADDRESS || "",
+        hbETH: process.env.NEXT_PUBLIC_HARMONIE_HBETH_ADDRESS || "",
       },
       Native: {
-        AFT: '0x'
+        HMY: '0x'
       }
     }
   },
@@ -52,7 +58,7 @@ export const DEPLOYED_CONTRACTS: ContractsType = {
     },
     tokens: {
       BridgedToken: { 
-        hbAFT: process.env.NEXT_PUBLIC_ETHEREUM_HBAFT_ADDRESS || "",
+        gbHMY: process.env.NEXT_PUBLIC_ETHEREUM_GBHMY_ADDRESS || "",
       },
       Native: {
         ETH: '0x',
@@ -98,6 +104,42 @@ export const RELAYER_ABI = [
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "RelayerBase__BlockConfirmationNotReached",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "role",
+        "type": "string"
+      }
+    ],
+    "name": "RelayerBase__CallerHasNotRole",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RelayerBase__InvalidOperationHash",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RelayerBase__InvalidOperationStatus",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RelayerBase__OperationAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RelayerBase__UserOperationsEmpty",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -402,54 +444,6 @@ export const RELAYER_ABI = [
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "from",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "chainIdFrom",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "chainIdTo",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "tokenName",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "nonce",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct RelayerBase.OperationParams",
-        "name": "params",
-        "type": "tuple"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
         "name": "blockStep",
@@ -603,73 +597,6 @@ export const RELAYER_ABI = [
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "from",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "chainIdFrom",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "chainIdTo",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "tokenName",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "nonce",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes",
-            "name": "signature",
-            "type": "bytes"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct RelayerBase.OperationParams",
-        "name": "params",
-        "type": "tuple"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "blockStep",
-        "type": "uint256"
-      }
-    ],
-    "name": "OperationReceived",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "operationHash",
-        "type": "bytes32"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
         "name": "chainId",
@@ -773,55 +700,6 @@ export const RELAYER_ABI = [
     "name": "completeOperation",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdTo",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "computeOperationHash",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -1311,55 +1189,17 @@ export const RELAYER_ABI = [
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "operationHash",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
       }
     ],
-    "name": "isDestinationOperationExist",
+    "name": "getUserOperations",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "bytes32[]",
         "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "operationHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "isOriginOperationCanceled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "operationHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "isOriginOperationExist",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "type": "bytes32[]"
       }
     ],
     "stateMutability": "view",
@@ -1577,6 +1417,30 @@ export const RELAYER_ABI = [
       }
     ],
     "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "s_currentUserOperations",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "operations",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1816,19 +1680,6 @@ export const RELAYER_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "s_storage",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -1902,15 +1753,26 @@ export const BRIDGE_ABI = [
         "internalType": "address",
         "name": "storageAddress",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "relayer",
-        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "role1",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "role2",
+        "type": "string"
+      }
+    ],
+    "name": "BridgeBase__CallerHasNotRole",
+    "type": "error"
   },
   {
     "inputs": [
@@ -1931,7 +1793,29 @@ export const BRIDGE_ABI = [
         "type": "string"
       }
     ],
+    "name": "BridgeBase__FeesDepositFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
     "name": "BridgeBase__FinalizationFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "BridgeBase__OperationCreationFailed",
     "type": "error"
   },
   {
@@ -2170,55 +2054,6 @@ export const BRIDGE_ABI = [
         "internalType": "uint256",
         "name": "nonce",
         "type": "uint256"
-      }
-    ],
-    "name": "computeOperationHash",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdTo",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
       },
       {
         "internalType": "bytes",
@@ -2262,35 +2097,6 @@ export const BRIDGE_ABI = [
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "chainIdFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "destinationNonces",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
         "internalType": "address",
         "name": "tokenFrom",
         "type": "address"
@@ -2304,19 +2110,6 @@ export const BRIDGE_ABI = [
     "name": "finalizeBridgeDeposit",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMaxAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -2439,82 +2232,6 @@ export const BRIDGE_ABI = [
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainIdTo",
-        "type": "uint256"
-      }
-    ],
-    "name": "getTokenAddresses",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mintOnlyTEST",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "nextUserNonce",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "newNonce",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "hash",
         "type": "bytes32"
@@ -2556,26 +2273,48 @@ export const BRIDGE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "s_relayer",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "user",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainIdFrom",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "s_destinationNonces",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "s_storage",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "user",
         "type": "address"
+      }
+    ],
+    "name": "s_nextUserNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "newNonce",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -2616,12 +2355,34 @@ export const STORAGE_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "storage_chainid_not_in_list",
+    "name": "Storage__ChainIdAlreadyInList",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Storage__ChainIdNotInList",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "functionName",
+        "type": "string"
+      }
+    ],
+    "name": "Storage__InvalidArrayLengthInParams",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "storage_not_admin",
+    "name": "Storage__NotAdmin",
     "type": "error"
   },
   {
@@ -2637,18 +2398,7 @@ export const STORAGE_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "storage_token_already_set",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      }
-    ],
-    "name": "storage_token_not_in_list",
+    "name": "Storage__TokenAddressAlreadySet",
     "type": "error"
   },
   {
@@ -2664,7 +2414,29 @@ export const STORAGE_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "storage_token_not_set",
+    "name": "Storage__TokenAddressNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenName",
+        "type": "string"
+      }
+    ],
+    "name": "Storage__TokenAlreadyInList",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tokenName",
+        "type": "string"
+      }
+    ],
+    "name": "Storage__TokenNotInList",
     "type": "error"
   },
   {
@@ -2672,18 +2444,18 @@ export const STORAGE_ABI = [
     "inputs": [
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
+        "internalType": "address[]",
+        "name": "newArray",
+        "type": "address[]"
       }
     ],
-    "name": "Storage_AuthorizedTokenNameAdded",
+    "name": "Storage__AddressArrayChanged",
     "type": "event"
   },
   {
@@ -2691,18 +2463,100 @@ export const STORAGE_ABI = [
     "inputs": [
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "index",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newValue",
+        "type": "address"
       }
     ],
-    "name": "Storage_AuthorizedTokenNameRemoved",
+    "name": "Storage__AddressArrayDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newValue",
+        "type": "address"
+      }
+    ],
+    "name": "Storage__AddressDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "newValue",
+        "type": "bool"
+      }
+    ],
+    "name": "Storage__BoolDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "newValue",
+        "type": "bytes32"
+      }
+    ],
+    "name": "Storage__Bytes32_DataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "newValue",
+        "type": "bytes"
+      }
+    ],
+    "name": "Storage__BytesDataChanged",
     "type": "event"
   },
   {
@@ -2715,7 +2569,70 @@ export const STORAGE_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "Storage_ChainIdAdded",
+    "name": "Storage__ChainIdAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string[]",
+        "name": "newArray",
+        "type": "string[]"
+      }
+    ],
+    "name": "Storage__StringArrayChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newValue",
+        "type": "string"
+      }
+    ],
+    "name": "Storage__StringArrayDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newValue",
+        "type": "string"
+      }
+    ],
+    "name": "Storage__StringDataChanged",
     "type": "event"
   },
   {
@@ -2740,7 +2657,7 @@ export const STORAGE_ABI = [
         "type": "address"
       }
     ],
-    "name": "Storage_TokenAddressSet",
+    "name": "Storage__TokenAddressSet",
     "type": "event"
   },
   {
@@ -2753,7 +2670,70 @@ export const STORAGE_ABI = [
         "type": "string"
       }
     ],
-    "name": "Storage_TokenNameAdded",
+    "name": "Storage__TokenNameAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "newArray",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "Storage__UintArrayChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "Storage__UintArrayDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "Storage__UintDataChanged",
     "type": "event"
   },
   {
@@ -2765,24 +2745,6 @@ export const STORAGE_ABI = [
       }
     ],
     "name": "addChainIdToList",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
-      }
-    ],
-    "name": "addNativeTokenByChainId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2813,17 +2775,53 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "value",
+        "type": "address"
+      }
+    ],
+    "name": "addToAddressArray",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
         "internalType": "string",
-        "name": "tokenName",
+        "name": "value",
         "type": "string"
+      }
+    ],
+    "name": "addToStringArray",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "value",
         "type": "uint256"
       }
     ],
-    "name": "addToAuthorizedTokenNamesListByChainId",
+    "name": "addToUintArray",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2837,6 +2835,19 @@ export const STORAGE_ABI = [
       }
     ],
     "name": "addTokenNameToList",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "chainIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "batchAddChainIdsToList",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2859,7 +2870,38 @@ export const STORAGE_ABI = [
         "type": "address[]"
       }
     ],
-    "name": "batchAddNewTokenAddressByChainId",
+    "name": "batchAddNewTokensAddressesByChainId",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "tokenNames",
+        "type": "string[]"
+      }
+    ],
+    "name": "batchAddTokenNamesToList",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "roles",
+        "type": "string[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "newOperators",
+        "type": "address[]"
+      }
+    ],
+    "name": "batchUpdateOperators",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2883,6 +2925,25 @@ export const STORAGE_ABI = [
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getAddr",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -2929,17 +2990,22 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "index",
         "type": "uint256"
       }
     ],
-    "name": "getAuthorizedTokenNamesListByChainId",
+    "name": "getAddressArrayValue",
     "outputs": [
       {
-        "internalType": "string[]",
+        "internalType": "address",
         "name": "",
-        "type": "string[]"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -2997,44 +3063,6 @@ export const STORAGE_ABI = [
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getBytes32Array",
-    "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "",
-        "type": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getBytesArray",
-    "outputs": [
-      {
-        "internalType": "bytes[]",
-        "name": "",
-        "type": "bytes[]"
       }
     ],
     "stateMutability": "view",
@@ -3159,19 +3187,6 @@ export const STORAGE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -3204,6 +3219,30 @@ export const STORAGE_ABI = [
         "internalType": "string[]",
         "name": "",
         "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getStringArrayValue",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -3251,16 +3290,16 @@ export const STORAGE_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "getTokenAddressesBychainIds",
+    "name": "getTokenAddressesByChainIds",
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "originChainAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "destinationChainAddress",
         "type": "address"
       }
     ],
@@ -3321,30 +3360,22 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
       }
     ],
-    "name": "isAdmin",
+    "name": "getUintArrayValue",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint256",
         "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "isAdmin",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -3375,57 +3406,6 @@ export const STORAGE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "isBridge",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "isBridge",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "isBridgedToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -3445,89 +3425,19 @@ export const STORAGE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "isFactory",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "isFactory",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "isOracle",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "isRelayer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "string",
-        "name": "tokenName",
+        "name": "role",
         "type": "string"
       },
       {
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
       }
     ],
-    "name": "isTokenNameAuthorizedByChainId",
+    "name": "isRole",
     "outputs": [
       {
         "internalType": "bool",
@@ -3560,61 +3470,6 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "isVault",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
-      }
-    ],
-    "name": "removeFromAuthorizedTokenNamesListByChainId",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
-      }
-    ],
-    "name": "removeTokenAddressByChainId",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"
@@ -3639,7 +3494,7 @@ export const STORAGE_ABI = [
       },
       {
         "internalType": "address[]",
-        "name": "value",
+        "name": "array",
         "type": "address[]"
       }
     ],
@@ -3703,13 +3558,6 @@ export const STORAGE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "setInitialValues",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -3730,88 +3578,17 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "admin",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
       {
-        "internalType": "address",
-        "name": "relayer",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "oracle",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "bridge",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "factory",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "vault",
-        "type": "address"
+        "internalType": "string[]",
+        "name": "array",
+        "type": "string[]"
       }
     ],
-    "name": "setTestOperator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "mockedDai",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "bridgedEth",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "bridgedAft",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "bridgedDai",
-        "type": "address"
-      }
-    ],
-    "name": "setTestValues",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "tokenName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setTokenAddressByChainId",
+    "name": "setStringArray",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -3843,11 +3620,34 @@ export const STORAGE_ABI = [
       },
       {
         "internalType": "uint256[]",
-        "name": "value",
+        "name": "array",
         "type": "uint256[]"
       }
     ],
     "name": "setUintArray",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "value",
+        "type": "address"
+      }
+    ],
+    "name": "updateAddressArray",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -3873,6 +3673,29 @@ export const STORAGE_ABI = [
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "value",
+        "type": "string"
+      }
+    ],
+    "name": "updateStringArray",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "tokenName",
         "type": "string"
@@ -3889,6 +3712,29 @@ export const STORAGE_ABI = [
       }
     ],
     "name": "updateTokenAddressByChainId",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateUintArray",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

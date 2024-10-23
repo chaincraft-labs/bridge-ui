@@ -2,7 +2,7 @@
 
 import { clx } from "@/lib/utils/clx/clx-merge";
 import { useState } from "react";
-import { getExplorerUrl } from "@/context/allfeat_bridge";
+import { getExplorerUrl } from "@/context/bridge";
 
 const Button = clx.button('text-xs sm:text-sm text-teal-500 dark:text-teal-200')
 
