@@ -17,6 +17,7 @@ import {
 	STORAGE_ABI, 
 	AUTHORIZED_TOKENS, 
 	nextOperationStatusSelector,
+	BRIDGED_TOKEN_ABI,
 } from "@/constants";
 import { 
 	TokenType, 
@@ -144,6 +145,25 @@ export const getTokens = async (chainId: number): Promise<TokenType[]> => {
   }
 
   return tokensList;
+}
+
+/**
+ *
+ *
+ * @param {number} chainId - The ID of the chain for which to retrieve tokens.
+ * @return {Promise<TokenType[]>} A promise that resolves to a list of tokens for the specified chain ID.
+ */
+export const getTokenAddressBySymbol = async (symbol: string): Promise<`0x${string}` | null> => {
+  const tokens = await getAllTokens();
+
+	if (tokens) {
+    for (const token of tokens) {
+			if (token.tokenName === symbol) {
+				return token.tokenAddress
+			}
+		}
+  }
+	return null;
 }
 
 
@@ -448,9 +468,7 @@ export const prepareBridgeRequest = async (
 ): Promise<BridgeRequestPreparedType> => {
 	try {
 		const nonce = await getAvailableNonceForUser(address, originChainId)
-		if ( nonce === null ) {
-			throw new Error('Nonce not found');
-		}
+		if ( nonce === null ) throw new Error('Nonce not found');
 
 		const operationHash = await getOperationHash(
 			address, 
@@ -461,11 +479,10 @@ export const prepareBridgeRequest = async (
 			nonce
 		)
 
-		if ( !operationHash ) {
-			throw new Error('Operation hash not found');
-		}
+		if ( !operationHash ) throw new Error('Operation hash not found');
+
 		const signedMessage = await createSignMessage(address, operationHash)
-	
+
 		return { 
 			nonce: nonce, 
 			operationHash: operationHash, 
@@ -476,6 +493,47 @@ export const prepareBridgeRequest = async (
 		throw formattedError(error);
 	}
 }
+
+
+export const approveToken = async (
+	{
+		originChainId,
+		tokenSymbol,
+		amount,
+		simulate = true,
+		execute = true,
+	} : {
+		originChainId: number,
+		tokenSymbol: string,
+		amount: bigint,
+		simulate?: boolean,
+		execute?: boolean,
+	}
+): Promise<any> => {
+	if (await isNativeToken(tokenSymbol)) return null;
+
+	const tokenAddress = await getTokenAddressBySymbol(tokenSymbol);
+
+	const parameters: any = {
+		chainId: originChainId,
+		abi: BRIDGED_TOKEN_ABI,
+		address: tokenAddress,
+		functionName: 'approve',
+		args: [
+			DEPLOYED_CONTRACTS[originChainId].contracts.Vault as `0x${string}`,
+			amount
+		],
+	}
+
+	return writeContractByFunctionNamev2(parameters, simulate, execute)
+		.then((tx) => {return tx})
+		.catch((err) => {
+			const error = err as GetBlockNumberErrorType
+			throw formattedError(error);
+		});
+}
+
+
 
 /**
  * Creates a bridge operation by calling the 'createBridgeOperation' function 
@@ -537,29 +595,26 @@ export const createBridgeOperation = async (
 		value: amount
 	}
 
-	if (!await isNativeToken(tokenSymbol)) {
-		parameters.value = 0
-	}
+	if (!await isNativeToken(tokenSymbol)) parameters.value = 0
 
 	return writeContractByFunctionNamev2(parameters, simulate, execute)
-	.then((tx) => {
-		return tx
-	})
-	.catch((err) => {
-		const error = err as GetBlockNumberErrorType
-		throw formattedError(error);
-	});
+		.then((tx) => {return tx})
+		.catch((err) => {
+			const error = err as GetBlockNumberErrorType
+			throw formattedError(error);
+		});
 }
 
 /**
  * Deposits fees for a bridge operation.
  *
- * @param {number} originChainId - The ID of the origin chain.
- * @param {number} targetChainId - The ID of the target chain.
- * @param {bigint} amount - The amount of fees to deposit.
- * @param {string} operationHash - The hash of the bridge operation.
- * @param {boolean} [simulate=true] - Whether to simulate the deposit operation.
- * @param {boolean} [execute=true] - Whether to execute the deposit operation.
+ * @param {Object} options - The options for depositing the fees.
+ * @param {number} options.originChainId - The ID of the origin chain.
+ * @param {number} options.targetChainId - The ID of the target chain.
+ * @param {bigint} options.amount - The amount of fees to deposit.
+ * @param {string} options.operationHash - The hash of the bridge operation.
+ * @param {boolean} options.simulate - Whether to simulate the deposit operation. Defaults to true.
+ * @param {boolean} options.execute - Whether to execute the deposit operation. Defaults to true.
  * @return {Promise<`0x${string}`>} A promise that resolves to the result of the deposit operation.
  */
 export const depositFees = async (
@@ -570,7 +625,7 @@ export const depositFees = async (
 		operationHash,
 		simulate = true,
 		execute = true,
-	}:{
+	} : {
 		originChainId: number,
 		targetChainId: number,
 		amount: bigint,
@@ -609,7 +664,7 @@ export const depositFees = async (
  * @param {`0x${string}`} address - The Ethereum address of the user.
  * @param {number} originChainId - The ID of the origin chain.
  * @param {number} targetChainId - The ID of the target chain.
- * @param {string} tokenName - The name of the token being transferred.
+ * @param {string} tokenName - The name of the token being transferred. (ETH, hbETH, HMY, gbHMY)
  * @param {bigint} amount - The amount of tokens being transferred.
  * @return {Promise<BridgeTransferDetailType>} An object containing the transaction hash of the bridge operation, the transaction hash of the fees deposit, and the operation hash.
  */
@@ -621,22 +676,31 @@ export const createBridgeTransfer = async (
 	amount: bigint,
 ): Promise<BridgeTransferDetailType> => {
 	try {
-		const tokenSymbol = tokenName
-		const authorizedToken = AUTHORIZED_TOKENS[tokenName]
-		
-		const preparedRequest = await prepareBridgeRequest(
+		const authorizedToken: string = AUTHORIZED_TOKENS[tokenName] // e.g: ethereum, harmonie
+
+		// Approve token
+		const result = await approveToken({
+			originChainId: originChainId,
+			tokenSymbol: tokenName,
+			amount: amount,
+			simulate: true,
+			execute: true,
+		});
+
+		const preparedRequest: BridgeRequestPreparedType = await prepareBridgeRequest(
 			address,
 			originChainId,
 			targetChainId,
 			authorizedToken,
 			amount
 		)
+
 		// Only simlate transaction first
 		let txCreateBridgeOperation = await createBridgeOperation({
 			address: address,
 			originChainId: originChainId,
 			targetChainId: targetChainId,
-			tokenSymbol: tokenSymbol,
+			tokenSymbol: tokenName,
 			tokenName: authorizedToken,
 			amount: amount,
 			nonce: preparedRequest.nonce,
@@ -659,7 +723,7 @@ export const createBridgeTransfer = async (
 			address: address,
 			originChainId: originChainId,
 			targetChainId: targetChainId,
-			tokenSymbol: tokenSymbol,
+			tokenSymbol: tokenName,
 			tokenName: authorizedToken,
 			amount: amount,
 			nonce: preparedRequest.nonce,
@@ -685,6 +749,7 @@ export const createBridgeTransfer = async (
 
 	} catch (e) {
 		const error = e as GetBlockNumberErrorType
+		console.error('error : ', error)
 		throw formattedError(error);
 	}
 }

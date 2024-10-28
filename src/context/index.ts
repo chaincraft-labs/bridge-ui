@@ -4,52 +4,6 @@ import { config } from '@/config';
 
 
 /**
- * Asynchronously writes a contract by function name.
- *
- * @param {string} functionName - The name of the function to call on the contract.
- * @param {number} chainId - The chain ID of the contract.
- * @param {any} abi - The ABI of the contract.
- * @param {`0x${string}`} contractAddress - The address of the contract.
- * @param {...(`0x${string}`[] | any[])} args - The arguments to pass to the contract function.
- * @return {Promise<`0x${string}`>} A promise that resolves to the result of the contract write operation.
- * @throws {GetBlockNumberErrorType} If there is an error during the contract write operation.
- */
-export const writeContractByFunctionName = async (
-  functionName: string,
-  chainId: number,
-  abi: any,
-  contractAddress: `0x${string}`,
-  value: bigint,
-  ...args: `0x${string}`[] | any[]
-): Promise<`0x${string}`> => {
-  try {
-    await simulateContract(config, {
-      chainId: chainId,
-      abi: abi,
-      address: contractAddress,
-      functionName: functionName,
-      args: args,
-      value: value
-    }) 
-
-    const result = await writeContract(config, {
-      chainId: chainId,
-      abi: abi,
-      address: contractAddress,
-      functionName: functionName,
-      args: args,
-      value: value
-    })
-        
-    return result;
-  } catch (e) {
-    const error = e as GetBlockNumberErrorType
-    throw formattedError(error);
-  }
-}
-
-
-/**
  * Writes a contract by function name with optional simulation and execution.
  *
  * @param {any} parameters - The parameters for the contract write operation.
@@ -122,7 +76,12 @@ export const readContractByFunctionName = async <T>(
 /**
  * Reads from a contract by function name with chain switching.
  *
- * @param {any} parameters - The parameters for the contract read operation.
+ * @param {Object} parameters - The parameters for the contract read operation.
+ * @param {any} parameters.chainId - The chain ID to use for the contract read operation.
+ * @param {any} parameters.abi - The ABI of the contract.
+ * @param {any} parameters.address - The address of the contract.
+ * @param {any} parameters.functionName - The name of the function to call on the contract.
+ * @param {any} parameters.args - The arguments to pass to the contract function.
  * @return {Promise<T>} The result of the contract read operation.
  */
 export const readContractByFunctionNamev2 = async <T>(parameters: any): Promise<T> => {
