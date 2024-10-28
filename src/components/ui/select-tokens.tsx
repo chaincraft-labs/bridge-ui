@@ -57,8 +57,8 @@ export function SelectTokens({
         </SelectItem>
 
         {tokens.map((token) => (
-          <SelectItem key={token.tokenName} value={token.tokenName} className={classNameContent}>
-          {token.tokenName}
+          <SelectItem key={token.tokenSymbol} value={token.tokenSymbol} className={classNameContent}>
+          {token.tokenSymbol}
           <div className="text-xs">{token.label}</div>
         </SelectItem>
         ))}

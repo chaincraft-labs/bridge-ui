@@ -40,6 +40,7 @@ export const DEPLOYED_CONTRACTS: ContractsType = {
       Storage: process.env.NEXT_PUBLIC_HARMONIE_STORAGE_ADDRESS || "",
       RelayerBase: process.env.NEXT_PUBLIC_HARMONIE_RELAYER_ADDRESS || "",
       BridgeBase: process.env.NEXT_PUBLIC_HARMONIE_BRIDGE_ADDRESS || "",
+      Vault: process.env.NEXT_PUBLIC_HARMONIE_VAULT_ADDRESS || "",
     },
     tokens: {
       BridgedToken: {
@@ -55,6 +56,7 @@ export const DEPLOYED_CONTRACTS: ContractsType = {
       Storage: process.env.NEXT_PUBLIC_ETHEREUM_STORAGE_ADDRESS || "",
       RelayerBase: process.env.NEXT_PUBLIC_ETHEREUM_RELAYER_ADDRESS || "",
       BridgeBase: process.env.NEXT_PUBLIC_ETHEREUM_BRIDGE_ADDRESS || "",
+      Vault: process.env.NEXT_PUBLIC_ETHEREUM_VAULT_ADDRESS || "",
     },
     tokens: {
       BridgedToken: { 
@@ -3736,6 +3738,33 @@ export const STORAGE_ABI = [
     ],
     "name": "updateUintArray",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+] as const
+
+export const ERC20_ABI = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   }

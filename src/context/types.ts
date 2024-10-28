@@ -23,7 +23,7 @@ export type TokenPairsType = {
 export type TokenType = {
 	chainId: number
   tokenType: string
-	tokenName: string
+	tokenSymbol: string
 	tokenAddress: `0x${string}`
 	label: string
 }

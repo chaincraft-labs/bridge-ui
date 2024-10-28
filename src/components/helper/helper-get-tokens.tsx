@@ -10,8 +10,7 @@ import {
   depositFees, 
   getAllTokens, 
   getAmountFromShortDecimal, 
-  getAmountToShortDecimal, 
-  getAuthorizedTokenNamesListByChainId, 
+  getAmountToShortDecimal,
   getAvailableNonceForUser, 
   getChainIds, 
   getExplorerUrl, 
@@ -22,7 +21,8 @@ import {
   getUserBalance, 
   getUserBalances, 
   isNativeToken, 
-  prepareBridgeRequest 
+  prepareBridgeRequest,
+  getTokenAddressBySymbol,
 } from '@/context/bridge'
 import { 
   BridgeRequestPreparedType, 
@@ -111,9 +111,6 @@ const HelperGetTokens = () => {
   const [depositFeesAmountInput, setDepositFeesAmountInput] = useState<bigint>(0n)
   const [depositFeesOperationHashInput, setDepositFeesOperationHashInput] = useState<`0x${string}`>("0x")
 
-  // getAuthorizedTokenNamesListByChainId
-  const [authorizedTokens, setAuthorizedTokens] = useState<string[]>([])
-
   // Create bridge transfer
   const [createBridgeTransferAddress, setCreateBridgeTransferAddress] = useState<`0x${string}`>("0x")
   const [createBridgeTransferOriginChainId, setCreateBridgeTransferOriginChainId] = useState(0)
@@ -144,7 +141,7 @@ const HelperGetTokens = () => {
   const handleGetAllTokens = () => {
     getAllTokens()
       .then((tokens) => { setTokens(tokens) })
-      .catch(err => { console.log("error : ", err) })
+      .catch(err => { console.error("error : ", err) })
   }
 
   const handleGetTokens = () => {
@@ -152,7 +149,7 @@ const HelperGetTokens = () => {
 
     getTokens(chainId)
       .then((tokens) => { setTokens2(tokens) })
-      .catch(err => { console.log("error : ", err) })
+      .catch(err => { console.error("error : ", err) })
   }
 
   const handleGetUserBalances = () => {
@@ -161,15 +158,12 @@ const HelperGetTokens = () => {
 
   const handleGetUserBalances2 = () => {
     getUserBalance(userBalanceAddressInput, userBalanceChainIdInput, userBalanceTokenAddressInput).then((userBalances: GetBalanceReturnType | void) => {
-      console.log("userBalances : ", userBalances)
       if (userBalances) { setUserBalance(userBalances) }
     })
   }
 
 
   const handleGetOperationHashStatus = () => {
-    console.log('call handleGetOperationHashStatusv2')
-
     getOperationHashStatus(
       operationStatusAccountAddressInput,
       operationStatusOriginChainIdInput,
@@ -182,15 +176,13 @@ const HelperGetTokens = () => {
         else { setOperationStatus(operationStatus) }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setOperationStatus(0)
       })
   }
 
 
   const handleGetAvailableNonceForUser = () => {
-    console.log('call handleGetAvailableNonceForUser')
-
     getAvailableNonceForUser(
       nonceAccountInput,
       nonceChainIdInput,
@@ -199,14 +191,12 @@ const HelperGetTokens = () => {
         setNonce(nonce)
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setNonce(null)
       })
   }
 
   const fetchGetOperationHash = () => {
-    console.log('call getOperationHash')
-
     getOperationHash(
       operationHashAccountInput,
       operationHashOriginChainIdInput,
@@ -220,14 +210,12 @@ const HelperGetTokens = () => {
         else { setOperationHash("0x") }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setOperationHash("0x")
       })
   }
 
   const handleCreateSignMessage = () => {
-    console.log('call createSignMessage')
-
     createSignMessage(
       signMessageAccountInput,
       signMessageMessageInput,
@@ -237,15 +225,13 @@ const HelperGetTokens = () => {
         else { setSignedMessage("0x") }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setSignedMessage("0x")
       })
   }
 
 
   const handlePrepareCreateOperationBridge = () => {
-    console.log('call handlePrepareCreateOperationBridge')
-
     prepareBridgeRequest(
       prepareBridgeOperAccountInput,
       prepareBridgeOperOriginChainIdInput,
@@ -258,14 +244,12 @@ const HelperGetTokens = () => {
         else { setBridgeOperationPrepared({ nonce: 0n, operationHash: "0x", signedMessage: "0x" }) }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setBridgeOperationPrepared({ nonce: 0n, operationHash: "0x", signedMessage: "0x" })
       })
   }
 
   const handleCreateBridgeOperation = () => {
-    console.log('call handleCreateBridgeOperation')
-
     createBridgeOperation({
       address: bridgeOperAccountInput,
       originChainId: bridgeOperOriginChainIdInput,
@@ -281,14 +265,12 @@ const HelperGetTokens = () => {
         else { setBridgeOperTx("0x") }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setBridgeOperTx("0x")
       })
   }
 
   const handleDepositFees = () => {
-    console.log('call handleDepositFees')
-
     depositFees({
       originChainId: depositFeesOriginChainIdInput,
       targetChainId: depositFeesTargetChainIdInput,
@@ -300,31 +282,12 @@ const HelperGetTokens = () => {
         else { setDepositFeesTx("0x") }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setDepositFeesTx("0x")
       })
   }
 
-
-  const fetchGetAuthorizedTokenNamesListByChainId = () => {
-    console.log('call getAuthorizedTokenNamesListByChainId')
-
-    getAuthorizedTokenNamesListByChainId(
-      chainId
-    )
-      .then((tokens) => {
-        if (tokens) { setAuthorizedTokens(tokens) }
-        else { setAuthorizedTokens([]) }
-      })
-      .catch(err => {
-        console.log("error : ", err)
-        setAuthorizedTokens([])
-      })
-  }
-
   const handleCreateBridgeTransfer = () => {
-    console.log('call handleCreateBridgeTransfer')
-
     createBridgeTransfer(
       createBridgeTransferAddress,
       createBridgeTransferOriginChainId,
@@ -337,13 +300,12 @@ const HelperGetTokens = () => {
         else { setCreateBridgeTransferTx({}) }
       })
       .catch(err => {
-        console.log("error : ", err)
+        console.error("error : ", err)
         setCreateBridgeTransferTx({})
       })
   }
 
   const handleConvertTokenAmount = () => {
-    console.log('call handleConvertTokenAmount')
     setConvertFromLongUserBalance(getAmountToShortDecimal(Number(convertLongUserBalance)))
     setConvertFromShortUserBalance(getAmountFromShortDecimal(convertShortUserBalance))
   }
@@ -354,11 +316,19 @@ const HelperGetTokens = () => {
 
 
   const handleIsNativeToken = () => {
-    console.log('call handleIsNativeToken')
       isNativeToken(tokenName)
       .then((result) => {
         setIsNativeTokenResult(result)
       })
+  }
+
+  const [tokenSymbol, setTokenSymbol] = useState("")
+  const [tokenAddress, setTokenAddress] = useState<`0x${string}`|null>(null)
+  const handlegetTokenAddressBySymbol = () => {
+    getTokenAddressBySymbol(tokenSymbol).then((result) => {
+      if (result) { setTokenAddress(result) }
+      else { setTokenAddress(null) }
+    })
   }
 
   return (
@@ -370,6 +340,19 @@ const HelperGetTokens = () => {
         <h2 className='p-1 text-base'>{PATH}/getChainIds</h2>
         <button onClick={handleGetChainIds} className='rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getChainIds</button>
         <div>chainIds: {chainIds.join(',')}</div>
+      </div>
+
+      {/* getTokenAddressBySymbol */}
+      <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
+        <h2 className='p-1 text-base'>{PATH}/getTokenAddressBySymbol</h2>
+
+        <div className='my-1 text-xs break-all'>tokenSymbol : gbHMY | hbETH</div>
+
+        <input type="text" onChange={e => setTokenSymbol(e.target.value)} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='tokenSymbol : gbHMY | hbETH' />
+
+        <button onClick={handlegetTokenAddressBySymbol} className='my-1 rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getTokenAddressBySymbol</button>
+
+        <div className='break-all text-xs'>Token address: {tokenAddress}</div>
       </div>
 
       {/* getExplorerUrl */}
@@ -394,7 +377,7 @@ const HelperGetTokens = () => {
             {tokens.map((token, index) =>
               <div key={index} className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full  break-all'>
                 <div><span className='pr-1 font-bold'>chainId</span>{token.chainId}</div>
-                <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenName}</div>
+                <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenSymbol}</div>
                 <div><span className='pr-1 font-bold'>tokenAddress</span>{token.tokenAddress}</div>
                 <div><span className='pr-1 font-bold'>label</span>{token.label}</div>
               </div>
@@ -415,7 +398,7 @@ const HelperGetTokens = () => {
           {tokens2.map((token, index) =>
             <div key={index} className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all'>
               <div><span className='pr-1 font-bold'>chainId</span>{token.chainId}</div>
-              <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenName}</div>
+              <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenSymbol}</div>
               <div><span className='pr-1 font-bold'>tokenAddress</span>{token.tokenAddress}</div>
               <div><span className='pr-1 font-bold'>label</span>{token.label}</div>
             </div>
@@ -429,14 +412,15 @@ const HelperGetTokens = () => {
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
         <h2 className='p-1 text-base'>{PATH}/getUserBalances</h2>
 
-        <div className='my-1 text-xs break-all'>{address}</div>
+        <div className='my-1 text-xs break-all'>user address : {address}</div>
 
         <input type="text" onChange={e => setAddressInput(e.target.value as `0x${string}`)} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='Wallet address 0x' />
 
         <button onClick={handleGetUserBalances} className='rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getUserBalances</button>
-        <div>
+
+        <div className='mt-1 flex flex-col text-xs'>
           {Object.keys(userBalances).map((key, index) =>
-            <div key={index} className='flex flex-col p-1 text-xs md:text-base rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all'>
+            <div key={index} className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all'>
               <div><span className='pr-1 font-bold'>chainId</span>{key}</div>
               <div><span className='pr-1 font-bold'>balance</span>{userBalances[key].balance}</div>
             </div>
@@ -458,7 +442,7 @@ const HelperGetTokens = () => {
 
         <button onClick={handleGetUserBalances2} className='rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getUserBalance</button>
 
-        <div className='flex flex-col p-1 text-xs md:text-base rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all'>
+        <div className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all text-xs'>
 
           <div><span className='pr-1 font-bold'>Symbol</span>{userBalance?.symbol}</div>
           <div><span className='pr-1 font-bold'>balance</span>{Number(userBalance?.value)}</div>
@@ -605,20 +589,6 @@ const HelperGetTokens = () => {
         <div className='text-xs break-all'>Tx: {depositFeesTx}</div>
 
       </div>
-
-      {/* getAuthorizedTokenNamesListByChainId */}
-      <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
-        <h2 className='p-1 text-base'>{PATH}/getAuthorizedTokenNamesListByChainId</h2>
-
-        <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
-
-        <input type="number" onChange={e => setChainId(Number(e.target.value))} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='chain id' />
-
-        <button onClick={fetchGetAuthorizedTokenNamesListByChainId} className='rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getAuthorizedTokenNamesListByChainId</button>
-        <div className='text-xs break-all'>Tokens: {authorizedTokens.join(', ')}</div>
-
-      </div>
-
 
       {/* createBridgeTransfer */}
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
