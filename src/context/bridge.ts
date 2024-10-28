@@ -1,31 +1,29 @@
-import { getBalance, GetBalanceReturnType, GetBlockNumberErrorType, } from 'wagmi/actions'
+import { getBalance, GetBalanceReturnType, GetBlockNumberErrorType } from 'wagmi/actions'
 import { config } from "@/config";
 import { 
-	createSignMessage, 
-	formattedError, 
-	readContractByFunctionName, 
-	readContractByFunctionNamev2, 
+	createSignMessage,
+	formattedError,
+	readContractByFunctionName,
 	writeContractByFunctionNamev2,
 } from "@/context";
 import { 
-	DEPLOYED_CONTRACTS, 
-	RELAYER_ABI, 
-	tokenBridgedLabel, 
-	TOKEN_PAIRS, 
-	OperationStatusLabels, 
-	BRIDGE_ABI, 
-	STORAGE_ABI, 
-	AUTHORIZED_TOKENS, 
+	DEPLOYED_CONTRACTS,
+	RELAYER_ABI,
+	tokenBridgedLabel,
+	TOKEN_PAIRS,
+	OperationStatusLabels,
+	BRIDGE_ABI,
+	AUTHORIZED_TOKENS,
 	nextOperationStatusSelector,
-	BRIDGED_TOKEN_ABI,
+	ERC20_ABI,
 } from "@/constants";
 import { 
-	TokenType, 
-	TokenPairType, 
-	UserBalancesType, 
-	OperationDetailType, 
-	BridgeRequestPreparedType, 
-	BridgeTransferDetailType, 
+	TokenType,
+	TokenPairType,
+	UserBalancesType,
+	OperationDetailType,
+	BridgeRequestPreparedType,
+	BridgeTransferDetailType,
 	OperationStatusSelectorType,
 } from '@/context/types';
 
@@ -131,14 +129,14 @@ export const getTokens = async (chainId: number): Promise<TokenType[]> => {
   
 	if (tokens) {
     Object.entries(tokens).forEach(([tokenType, tokens]) => {
-      Object.entries(tokens).forEach(([tokenName, tokenAddress]) => {
+      Object.entries(tokens).forEach(([tokenSymbol, tokenAddress]) => {
 
         tokensList.push({
           chainId,
 					tokenType,
-          tokenName,
+          tokenSymbol: tokenSymbol,
           tokenAddress: tokenAddress as `0x${string}`,
-					label: tokenBridgedLabel[tokenName] ?? tokenName
+					label: tokenBridgedLabel[tokenSymbol] ?? tokenSymbol
         });
       });
     });
@@ -158,7 +156,7 @@ export const getTokenAddressBySymbol = async (symbol: string): Promise<`0x${stri
 
 	if (tokens) {
     for (const token of tokens) {
-			if (token.tokenName === symbol) {
+			if (token.tokenSymbol === symbol) {
 				return token.tokenAddress
 			}
 		}
@@ -175,7 +173,7 @@ export const getTokenAddressBySymbol = async (symbol: string): Promise<`0x${stri
  */
 export const isNativeToken = async (token: string): Promise<boolean> => {
 	const tokens: TokenType[] = await getAllTokens()
-	return tokens.some(t => t.tokenName === token && t.tokenType === "Native")
+	return tokens.some(t => t.tokenSymbol === token && t.tokenType === "Native")
 }
 
 
@@ -210,7 +208,7 @@ export const getUserBalances = async (address: `0x${string}` | undefined,): Prom
 		const balance = await getUserBalance(address, token.chainId, token.tokenAddress)
 		const tokenBalance = Number(balance?.value ?? 0)
 
-		userBalances[token.tokenName] = {
+		userBalances[token.tokenSymbol] = {
 			address: address as `0x${string}`,
 			chainId: token.chainId,
 			token: token.tokenAddress,
@@ -296,37 +294,6 @@ export const getStatusLabel = (status: number): string | null => {
 // 
 // ----------------------------------------------------------------- 
 
-
-/**
- * Retrieves the list of authorized token names by chain ID.
- *
- * @param {number} chainId - The ID of the chain.
- * @return {Promise<string[] | null>} A promise that resolves to an array of authorized token names or null if an error occurs.
- */
-export const getAuthorizedTokenNamesListByChainId = async (
-	chainId: number,
-): Promise<string[] | null> => {
-
-	const parameters: any = {
-		chainId: chainId,
-		abi: STORAGE_ABI,
-		address: DEPLOYED_CONTRACTS[chainId].contracts.Storage,
-		functionName: 'getAuthorizedTokenNamesListByChainId',
-		args: [
-			chainId
-		]
-	}
-
-	return readContractByFunctionNamev2<string[]>(parameters)
-		.then((data) => {
-			return data
-		})
-		.catch((err) => {
-			console.warn("Error: operationStatus : ", err)
-			return null;
-		});
-}
-
 /**
  * Retrieves the operation hash status from the blockchain based on the given parameters.
  *
@@ -404,7 +371,7 @@ export const getAvailableNonceForUser = async (
  * @param {`0x${string}`} address - The Ethereum address.
  * @param {number} originChainId - The ID of the origin chain.
  * @param {number} targetChainId - The ID of the target chain.
- * @param {string} tokenName - The name of the token.
+ * @param {string} tokenName - The name of the token. (e.g. ethereum | harmonie)
  * @param {bigint} amount - The amount.
  * @param {bigint} nonce - The nonce.
  * @return {Promise<`0x${string}` | null>} A promise that resolves to the operation hash or null if an error occurs.
@@ -422,7 +389,7 @@ export const getOperationHash = async (
 	return readContractByFunctionName<`0x${string}`>(
 				"getMessageHash",
 				Number(originChainId),
-				BRIDGE_ABI,
+				RELAYER_ABI,
 				contractAddress,
 				address,
 				address,
@@ -455,7 +422,7 @@ export const getOperationHash = async (
  * @param {`0x${string}`} address - The Ethereum address of the user.
  * @param {number} originChainId - The ID of the origin chain.
  * @param {number} targetChainId - The ID of the target chain.
- * @param {string} tokenName - The name of the token.
+ * @param {string} tokenName - The name of the token. (e.g. ethereum | harmonie)
  * @param {bigint} amount - The amount of the token.
  * @return {Promise<BridgeRequestPreparedType>} A promise that resolves to the prepared bridge request.
  */
@@ -495,6 +462,17 @@ export const prepareBridgeRequest = async (
 }
 
 
+/**
+ * Approves a token by calling the 'approve' function on the ERC20 contract.
+ *
+ * @param {Object} options - The options for approving the token.
+ * @param {number} options.originChainId - The ID of the origin chain.
+ * @param {string} options.tokenSymbol - The symbol of the token.
+ * @param {bigint} options.amount - The amount to approve.
+ * @param {boolean} options.simulate - Whether to simulate the approval operation. Defaults to true.
+ * @param {boolean} options.execute - Whether to execute the approval operation. Defaults to true.
+ * @return {Promise<any>} A promise that resolves to the result of the approval operation.
+ */
 export const approveToken = async (
 	{
 		originChainId,
@@ -516,7 +494,7 @@ export const approveToken = async (
 
 	const parameters: any = {
 		chainId: originChainId,
-		abi: BRIDGED_TOKEN_ABI,
+		abi: ERC20_ABI,
 		address: tokenAddress,
 		functionName: 'approve',
 		args: [
@@ -532,7 +510,6 @@ export const approveToken = async (
 			throw formattedError(error);
 		});
 }
-
 
 
 /**
@@ -664,7 +641,7 @@ export const depositFees = async (
  * @param {`0x${string}`} address - The Ethereum address of the user.
  * @param {number} originChainId - The ID of the origin chain.
  * @param {number} targetChainId - The ID of the target chain.
- * @param {string} tokenName - The name of the token being transferred. (ETH, hbETH, HMY, gbHMY)
+ * @param {string} tokenSymbol - The symbol of the token being transferred. (ETH, hbETH, HMY, gbHMY)
  * @param {bigint} amount - The amount of tokens being transferred.
  * @return {Promise<BridgeTransferDetailType>} An object containing the transaction hash of the bridge operation, the transaction hash of the fees deposit, and the operation hash.
  */
@@ -672,16 +649,15 @@ export const createBridgeTransfer = async (
 	address: `0x${string}`,
 	originChainId: number,
 	targetChainId: number,
-	tokenName: string,
+	tokenSymbol: string,
 	amount: bigint,
 ): Promise<BridgeTransferDetailType> => {
 	try {
-		const authorizedToken: string = AUTHORIZED_TOKENS[tokenName] // e.g: ethereum, harmonie
+		const tokenName: string = AUTHORIZED_TOKENS[tokenSymbol] // e.g: ethereum, harmonie
 
-		// Approve token
-		const result = await approveToken({
+		await approveToken({
 			originChainId: originChainId,
-			tokenSymbol: tokenName,
+			tokenSymbol: tokenSymbol,
 			amount: amount,
 			simulate: true,
 			execute: true,
@@ -691,7 +667,7 @@ export const createBridgeTransfer = async (
 			address,
 			originChainId,
 			targetChainId,
-			authorizedToken,
+			tokenName,
 			amount
 		)
 
@@ -700,8 +676,8 @@ export const createBridgeTransfer = async (
 			address: address,
 			originChainId: originChainId,
 			targetChainId: targetChainId,
-			tokenSymbol: tokenName,
-			tokenName: authorizedToken,
+			tokenSymbol: tokenSymbol,
+			tokenName: tokenName,
 			amount: amount,
 			nonce: preparedRequest.nonce,
 			signedMessage: preparedRequest.signedMessage,
@@ -723,8 +699,8 @@ export const createBridgeTransfer = async (
 			address: address,
 			originChainId: originChainId,
 			targetChainId: targetChainId,
-			tokenSymbol: tokenName,
-			tokenName: authorizedToken,
+			tokenSymbol: tokenSymbol,
+			tokenName: tokenName,
 			amount: amount,
 			nonce: preparedRequest.nonce,
 			signedMessage: preparedRequest.signedMessage,

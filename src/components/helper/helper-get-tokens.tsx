@@ -10,8 +10,7 @@ import {
   depositFees, 
   getAllTokens, 
   getAmountFromShortDecimal, 
-  getAmountToShortDecimal, 
-  getAuthorizedTokenNamesListByChainId, 
+  getAmountToShortDecimal,
   getAvailableNonceForUser, 
   getChainIds, 
   getExplorerUrl, 
@@ -111,9 +110,6 @@ const HelperGetTokens = () => {
   const [depositFeesTargetChainIdInput, setDepositFeesTargetChainIdInput] = useState<number>(0)
   const [depositFeesAmountInput, setDepositFeesAmountInput] = useState<bigint>(0n)
   const [depositFeesOperationHashInput, setDepositFeesOperationHashInput] = useState<`0x${string}`>("0x")
-
-  // getAuthorizedTokenNamesListByChainId
-  const [authorizedTokens, setAuthorizedTokens] = useState<string[]>([])
 
   // Create bridge transfer
   const [createBridgeTransferAddress, setCreateBridgeTransferAddress] = useState<`0x${string}`>("0x")
@@ -291,21 +287,6 @@ const HelperGetTokens = () => {
       })
   }
 
-
-  const fetchGetAuthorizedTokenNamesListByChainId = () => {
-    getAuthorizedTokenNamesListByChainId(
-      chainId
-    )
-      .then((tokens) => {
-        if (tokens) { setAuthorizedTokens(tokens) }
-        else { setAuthorizedTokens([]) }
-      })
-      .catch(err => {
-        console.error("error : ", err)
-        setAuthorizedTokens([])
-      })
-  }
-
   const handleCreateBridgeTransfer = () => {
     createBridgeTransfer(
       createBridgeTransferAddress,
@@ -396,7 +377,7 @@ const HelperGetTokens = () => {
             {tokens.map((token, index) =>
               <div key={index} className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full  break-all'>
                 <div><span className='pr-1 font-bold'>chainId</span>{token.chainId}</div>
-                <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenName}</div>
+                <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenSymbol}</div>
                 <div><span className='pr-1 font-bold'>tokenAddress</span>{token.tokenAddress}</div>
                 <div><span className='pr-1 font-bold'>label</span>{token.label}</div>
               </div>
@@ -417,7 +398,7 @@ const HelperGetTokens = () => {
           {tokens2.map((token, index) =>
             <div key={index} className='p-1 flex flex-col rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 w-full break-all'>
               <div><span className='pr-1 font-bold'>chainId</span>{token.chainId}</div>
-              <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenName}</div>
+              <div><span className='pr-1 font-bold'>tokenName</span>{token.tokenSymbol}</div>
               <div><span className='pr-1 font-bold'>tokenAddress</span>{token.tokenAddress}</div>
               <div><span className='pr-1 font-bold'>label</span>{token.label}</div>
             </div>
@@ -608,20 +589,6 @@ const HelperGetTokens = () => {
         <div className='text-xs break-all'>Tx: {depositFeesTx}</div>
 
       </div>
-
-      {/* getAuthorizedTokenNamesListByChainId */}
-      <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
-        <h2 className='p-1 text-base'>{PATH}/getAuthorizedTokenNamesListByChainId</h2>
-
-        <div className='my-1 text-xs break-all'>chainID : 440 | 1337</div>
-
-        <input type="number" onChange={e => setChainId(Number(e.target.value))} className='p-2 rounded border border-zinc-200 dark:border-zinc-700 my-1 text-xs w-full' placeholder='chain id' />
-
-        <button onClick={fetchGetAuthorizedTokenNamesListByChainId} className='rounded px-2 py-1 bg-zinc-700 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900'>getAuthorizedTokenNamesListByChainId</button>
-        <div className='text-xs break-all'>Tokens: {authorizedTokens.join(', ')}</div>
-
-      </div>
-
 
       {/* createBridgeTransfer */}
       <div className='p-2 mt-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800'>
