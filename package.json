@@ -16,7 +16,7 @@
     "aria-hidden": "^1.2.4",
     "data-umd": "link:country-region-data/dist/data-umd",
     "framer-motion": "^11.3.30",
-    "next": "14.2.4",
+    "next": "14.2.15",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
